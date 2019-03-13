@@ -17,29 +17,43 @@ Renderer::~Renderer()
 
 void Renderer::Initialize(int windowSizeX, int windowSizeY)
 {
+	srand(time(NULL));
+
 	//Set window size
 	m_WindowSizeX = windowSizeX;
 	m_WindowSizeY = windowSizeY;
 
 	//Load shaders
 	m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
-	
+	m_SolidTriShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
 	//Create VBOs
 	CreateVertexBufferObjects();
 }
 
 void Renderer::CreateVertexBufferObjects()
 {
-	float rect[]
-		=
-	{
-		-0.5, -0.5, 0.f, -0.5, 0.5, 0.f, 0.5, 0.5, 0.f, //Triangle1
-		-0.5, -0.5, 0.f,  0.5, 0.5, 0.f, 0.5, -0.5, 0.f, //Triangle2
-	};
-	//glEnableVertexArrayAttrib()
-	glGenBuffers(1, &m_VBORect);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
+	//float rect[]
+	//	=
+	//{
+	//	-0.5, -0.5, 0.f, -0.5, 0.5, 0.f, 0.5, 0.5, 0.f, //Triangle1
+	//	-0.5, -0.5, 0.f,  0.5, 0.5, 0.f, 0.5, -0.5, 0.f, //Triangle2
+	//};
+	////glEnableVertexArrayAttrib()
+	//glGenBuffers(1, &m_VBORect);
+	//glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
+
+	//// Lecture02
+	//float tri[]
+	//	=
+	//{
+	//	-0.5f,-0.5f,0.f, 0.f,0.5f,0.f, 0.5f,-0.5f,0.f
+	//};
+	//glGenBuffers(1, &m_VBOTri);
+	//glBindBuffer(GL_ARRAY_BUFFER, m_VBOTri);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(tri), tri, GL_STATIC_DRAW);
+
+	Lecture2_3(100);
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -279,4 +293,72 @@ void Renderer::Test()
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glDisableVertexAttribArray(attribPosition);
+}
+
+void Renderer::Lecture2()
+{
+	glUseProgram(m_SolidTriShader);
+
+	int attribPosition = glGetAttribLocation(m_SolidTriShader, "a_Position");
+	glEnableVertexAttribArray(attribPosition);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTri);
+	glVertexAttribPointer(attribPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	glDisableVertexAttribArray(attribPosition);
+}
+
+void Renderer::Lecture2_2()
+{
+	glUseProgram(m_SolidRectShader);
+
+	int attribPosition = glGetAttribLocation(m_SolidRectShader, "a_Position");
+	glEnableVertexAttribArray(attribPosition);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOGen);
+	glVertexAttribPointer(attribPosition, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+
+	glDrawArrays(GL_TRIANGLES, 0, m_nGen * 6 * 3);
+
+	glDisableVertexAttribArray(attribPosition);
+}
+
+void Renderer::Lecture2_3(int num)
+{
+	m_nGen = num;
+	int vertexArraySize = num * 3 * 6;
+	float rectSize = 0.01f;
+
+	float *genVertex = new float[vertexArraySize] {};
+	int idx = 0;
+	for (int i = 1; i <= num; ++i)
+	{
+		float seedX = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
+		float seedY = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
+
+		genVertex[idx++] = seedX + rectSize;
+		genVertex[idx++] = seedY + rectSize;
+		genVertex[idx++] = 0.f;
+		genVertex[idx++] = seedX - rectSize;
+		genVertex[idx++] = seedY + rectSize;
+		genVertex[idx++] = 0.f;
+		genVertex[idx++] = seedX - rectSize;
+		genVertex[idx++] = seedY - rectSize;
+		genVertex[idx++] = 0.f;
+		
+		genVertex[idx++] = seedX + rectSize;
+		genVertex[idx++] = seedY - rectSize;
+		genVertex[idx++] = 0.f;
+		genVertex[idx++] = seedX + rectSize;
+		genVertex[idx++] = seedY + rectSize;
+		genVertex[idx++] = 0.f;
+		genVertex[idx++] = seedX - rectSize;
+		genVertex[idx++] = seedY - rectSize;
+		genVertex[idx++] = 0.f;
+	}
+	glGenBuffers(1, &m_VBOGen);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOGen);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexArraySize, genVertex, GL_STATIC_DRAW);
+
+	delete[] genVertex;
 }

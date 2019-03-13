@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <random>
+#include <time.h>
 
 #include "Dependencies\glew.h"
 #include "Dependencies\wglew.h"
@@ -21,7 +23,9 @@ public:
 	GLuint CreateBmpTexture(char * filePath);
 	   
 	void Test();
-
+	void Lecture2();
+	void Lecture2_2();
+	void Lecture2_3(int num);
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	bool ReadFile(char* filename, std::string *target);
@@ -37,5 +41,11 @@ private:
 
 	GLuint m_VBORect = 0;
 	GLuint m_SolidRectShader = 0;
+
+	GLuint m_VBOTri = 0;
+	GLuint m_SolidTriShader = 0;
+
+	GLuint m_VBOGen = 0;
+	int m_nGen = 0;
 };
 
