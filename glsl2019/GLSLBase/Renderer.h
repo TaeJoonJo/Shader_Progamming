@@ -26,6 +26,10 @@ public:
 	void Lecture2();
 	void Lecture2_2();
 	void Lecture2_3(int num);
+	void Lecture4();
+
+	void CreateGridMesh(void);
+	void DrawGridMesh(void);
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	bool ReadFile(char* filename, std::string *target);
@@ -39,13 +43,21 @@ private:
 	unsigned int m_WindowSizeX = 0;
 	unsigned int m_WindowSizeY = 0;
 
-	GLuint m_VBORect = 0;
-	GLuint m_SolidRectShader = 0;
+	float m_uTime = 0;
+	float m_uTimeDir = -1.f;
 
+	GLuint m_VBORect = 0;
+	GLuint m_VBORectColor = 0;
+	GLuint m_SolidRectShader = 0;
+	
 	GLuint m_VBOTri = 0;
 	GLuint m_SolidTriShader = 0;
 
 	GLuint m_VBOGen = 0;
 	int m_nGen = 0;
+	GLuint m_ParticleShader = 0;
+
+	GLuint m_VBOGridMesh = 0;
+	int m_nGridMesh = 0;
 };
 
