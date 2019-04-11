@@ -27,6 +27,11 @@ public:
 	void Lecture2_2();
 	void Lecture2_3(int num);
 	void Lecture4();
+	void Lecture5();
+	void Lecture6();
+	void Lecture6_Shader(int num, bool israndom, GLuint *pvbo, int *pnvbo, float x, float y, float z);
+
+	void Lecture7();
 
 	void CreateGridMesh(void);
 	void DrawGridMesh(void);
@@ -44,12 +49,15 @@ private:
 	unsigned int m_WindowSizeY = 0;
 
 	float m_uTime = 0;
-	float m_uTimeDir = -1.f;
+	float m_uTimeDir = 1.f;
+	float m_uUTime = 0;
 
 	GLuint m_VBORect = 0;
 	GLuint m_VBORectColor = 0;
 	GLuint m_SolidRectShader = 0;
 	
+	GLuint m_SandBoxShader = 0;
+
 	GLuint m_VBOTri = 0;
 	GLuint m_SolidTriShader = 0;
 
@@ -57,7 +65,20 @@ private:
 	int m_nGen = 0;
 	GLuint m_ParticleShader = 0;
 
+	int m_nPos = 0;
+	GLuint m_VBOpos = 0;
+	GLuint m_PosShader = 0;
+
 	GLuint m_VBOGridMesh = 0;
 	int m_nGridMesh = 0;
 };
 
+template <typename T>
+static T GetRandom(T min, T max)
+{
+	std::random_device rd;
+	std::mt19937_64 rnd(rd());
+	std::uniform_real_distribution<float> range(min, max);
+	
+	return range(rnd);
+}

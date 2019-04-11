@@ -41,6 +41,18 @@
     <None Include="Shaders\Lecture3_Particle.fs">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shaders\Lecture3_3.fs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\Lecture3_3.vs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shaders\SandBox.fs">
+      <Filter>Shader\SandBox</Filter>
+    </None>
+    <None Include="Shaders\SandBox.vs">
+      <Filter>Shader\SandBox</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -54,6 +66,9 @@
     </Filter>
     <Filter Include="Shader">
       <UniqueIdentifier>{67bf60d2-2daa-4412-a92a-1ef604d4703f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\SandBox">
+      <UniqueIdentifier>{3741b486-52ae-46f3-9b3e-6a04dc296295}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

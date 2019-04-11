@@ -17,8 +17,8 @@ but WITHOUT ANY WARRANTY.
 
 Renderer *g_Renderer = NULL;
 
-int g_WindowSizeX = 500;
-int g_WindowSizeY = 500;
+int g_WindowSizeX = 600;
+int g_WindowSizeY = 600;
 
 void RenderScene(void)
 {
@@ -27,7 +27,10 @@ void RenderScene(void)
 
 	//g_Renderer->Test();
 	//g_Renderer->Lecture2_2();
-	g_Renderer->Lecture4();
+	//g_Renderer->Lecture4();
+	//g_Renderer->Lecture5();
+	//g_Renderer->Lecture6();
+	g_Renderer->Lecture7();
 
 	glutSwapBuffers();
 }
@@ -57,7 +60,7 @@ int main(int argc, char **argv)
 	// Initialize GL things
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(0, 0);
+	glutInitWindowPosition(600, 200);
 	glutInitWindowSize(g_WindowSizeX, g_WindowSizeY);
 	glutCreateWindow("GLSL KPU");
 

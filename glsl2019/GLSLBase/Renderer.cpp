@@ -27,6 +27,9 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
 	m_SolidTriShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
 	m_ParticleShader = CompileShaders("./Shaders/Lecture3_Particle.vs", "./Shaders/Lecture3_Particle.fs");
+	m_PosShader = CompileShaders("./Shaders/Lecture3_3.vs", "./Shaders/Lecture3_3.fs");
+
+	m_SandBoxShader = CompileShaders("./Shaders/SandBox.vs", "./Shaders/SandBox.fs");
 	//Create VBOs
 	CreateVertexBufferObjects();
 }
@@ -39,16 +42,16 @@ void Renderer::CreateVertexBufferObjects()
 	//	-0.5, -0.5, 0.f, -0.5, 0.5, 0.f, 0.5, 0.5, 0.f, //Triangle1
 	//	-0.5, -0.5, 0.f,  0.5, 0.5, 0.f, 0.5, -0.5, 0.f, //Triangle2
 	//};
-	float fsize = 0.02f;
+	float fsize = 0.5f;
 	float rect[]
 		=
 	{
-		-fsize, -fsize, 0.f, 1.f,  
-		-fsize,  fsize, 0.f, 1.f,  
-		 fsize,  fsize, 0.f, 1.f, //Triangle1
-		-fsize, -fsize, 0.f, 1.f,  
-		 fsize,  fsize, 0.f, 1.f,  
-		 fsize, -fsize, 0.f, 1.f	//Triangle2
+		-fsize, -fsize, 0.f, 0.5f, 0.f, 0.f,				// x, y, z, value, u, v
+		-fsize,  fsize, 0.f, 0.5f, 0.f, 1.f,  
+		 fsize,  fsize, 0.f, 0.5f, 1.f, 1.f,				//Triangle1
+		-fsize, -fsize, 0.f, 0.5f, 0.f, 0.f,  
+		 fsize,  fsize, 0.f, 0.5f, 1.f, 1.f,  
+		 fsize, -fsize, 0.f, 0.5f, 1.f, 0.f					//Triangle2
 	};
 	//glEnableVertexArrayAttrib()
 	glGenBuffers(1, &m_VBORect);
@@ -80,7 +83,9 @@ void Renderer::CreateVertexBufferObjects()
 	//glBindBuffer(GL_ARRAY_BUFFER, m_VBOTri);
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(tri), tri, GL_STATIC_DRAW);
 
-	Lecture2_3(1000);
+	Lecture2_3(100);
+
+	Lecture6_Shader(100, false, &m_VBOpos, &m_nPos, 0, 0, 0);
 
 	CreateGridMesh();
 }
@@ -379,18 +384,34 @@ void Renderer::Lecture2_3(int num)
 	glUseProgram(m_SolidRectShader);
 
 	m_nGen = num;
-	int vertexArraySize = num * 6 * 6;
-	float rectSize = 0.01f;
+	
+	float rectSize = 0.03f;
+	int verticePerQuad = 6;
+	int floatsPerVertex = 3 + 3 + 2;
 
+	int vertexArraySize = num * floatsPerVertex * verticePerQuad;
 	float *genVertex = new float[vertexArraySize] {};
 	int idx = 0;
+	std::random_device rd;
+	std::mt19937_64 rnd(rd());
+	std::uniform_int_distribution<int> range(0.f, 6.f);
+	range(rnd);
+
 	for (int i = 1; i <= num; ++i)
 	{
+		float emitTimeMax = 6.f;
+		float lifeTimeMax = 3.f;
+
 		float randX = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
 		float randY = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
 		float randvelx = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
 		float randvely = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
 		float randvelz = 0.f;
+		float randgx = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
+		float randgy = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
+		float randgz = 0.f;
+		float randemit = (float)(((float)rand() / (float)RAND_MAX) * emitTimeMax);
+		float randlife = (float)(((float)rand() / (float)RAND_MAX) * lifeTimeMax) + 1.f;
 
 		genVertex[idx++] = randX + rectSize;
 		genVertex[idx++] = randY + rectSize;
@@ -398,18 +419,24 @@ void Renderer::Lecture2_3(int num)
 		genVertex[idx++] = randvelx;
 		genVertex[idx++] = randvely;
 		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
 		genVertex[idx++] = randX - rectSize;
 		genVertex[idx++] = randY + rectSize;
 		genVertex[idx++] = 0.f;
 		genVertex[idx++] = randvelx;
 		genVertex[idx++] = randvely;
 		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
 		genVertex[idx++] = randX - rectSize;
 		genVertex[idx++] = randY - rectSize;
 		genVertex[idx++] = 0.f;
 		genVertex[idx++] = randvelx;
 		genVertex[idx++] = randvely;
 		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
 		
 		genVertex[idx++] = randX + rectSize;
 		genVertex[idx++] = randY - rectSize;
@@ -417,21 +444,177 @@ void Renderer::Lecture2_3(int num)
 		genVertex[idx++] = randvelx;
 		genVertex[idx++] = randvely;
 		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
 		genVertex[idx++] = randX + rectSize;
 		genVertex[idx++] = randY + rectSize;
 		genVertex[idx++] = 0.f;
 		genVertex[idx++] = randvelx;
 		genVertex[idx++] = randvely;
 		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
 		genVertex[idx++] = randX - rectSize;
 		genVertex[idx++] = randY - rectSize;
 		genVertex[idx++] = 0.f;
 		genVertex[idx++] = randvelx;
 		genVertex[idx++] = randvely;
 		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
 	}
 	glGenBuffers(1, &m_VBOGen);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBOGen);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexArraySize, genVertex, GL_STATIC_DRAW);
+
+	delete[] genVertex;
+}
+
+void Renderer::Lecture6_Shader(int num, bool israndom, GLuint *pvbo, int *pnvbo, float x, float y, float z)
+{
+	glUseProgram(m_SolidRectShader);
+
+	*pnvbo = num;
+
+	float rectSize = 0.05f;
+	int verticePerQuad = 6;
+	int floatsPerVertex = 3 + 3 + 2 + 2 + 1 + 4;
+
+	int vertexArraySize = num * floatsPerVertex * verticePerQuad;
+	float *genVertex = new float[vertexArraySize] {};
+	int idx = 0;
+	
+
+	for (int i = 1; i <= num; ++i)
+	{
+		float heightMin = -0.2f;
+		float heightMax = 0.2f;
+		float widthMin = 0.1f;
+		float widthMax = 0.5f;
+		float randX = 0.f;
+		float randY = 0.f;
+		if (israndom) {
+			randX = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
+			randY = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
+		}
+		else {
+			randX = x;
+			randY = y;
+		}
+
+		float randvelx = GetRandom(-1.f, 1.f);
+		float randvely = GetRandom(-1.f, 1.f);
+		float randvelz = 0.f;
+
+		float randgx = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
+		float randgy = 2.f * (((float)rand() / (float)(RAND_MAX)) - 0.5f);
+		float randgz = 0.f;
+
+		float randemit = GetRandom(0.f, 5.f);
+		float randlife = GetRandom(1.f, 2.f);
+		float randHeight = GetRandom(heightMin, heightMax);
+		float randWidth = GetRandom(widthMin, widthMax);
+		float randValue = GetRandom(0.f, 1.f);
+
+		float randR = GetRandom(0.f, 1.f);
+		float randG = GetRandom(0.f, 1.f);
+		float randB = GetRandom(0.f, 1.f);
+		float randA = 1.f;
+
+		genVertex[idx++] = randX + rectSize;
+		genVertex[idx++] = randY + rectSize;
+		genVertex[idx++] = 0.f;
+		genVertex[idx++] = randvelx;
+		genVertex[idx++] = randvely;
+		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
+		genVertex[idx++] = randHeight;
+		genVertex[idx++] = randWidth;
+		genVertex[idx++] = randValue;
+		genVertex[idx++] = randR;
+		genVertex[idx++] = randG;
+		genVertex[idx++] = randB;
+		genVertex[idx++] = randA;
+		genVertex[idx++] = randX - rectSize;
+		genVertex[idx++] = randY + rectSize;
+		genVertex[idx++] = 0.f;
+		genVertex[idx++] = randvelx;
+		genVertex[idx++] = randvely;
+		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
+		genVertex[idx++] = randHeight;
+		genVertex[idx++] = randWidth;
+		genVertex[idx++] = randValue;
+		genVertex[idx++] = randR;
+		genVertex[idx++] = randG;
+		genVertex[idx++] = randB;
+		genVertex[idx++] = randA;
+		genVertex[idx++] = randX - rectSize;
+		genVertex[idx++] = randY - rectSize;
+		genVertex[idx++] = 0.f;
+		genVertex[idx++] = randvelx;
+		genVertex[idx++] = randvely;
+		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
+		genVertex[idx++] = randHeight;
+		genVertex[idx++] = randWidth;
+		genVertex[idx++] = randValue;
+		genVertex[idx++] = randR;
+		genVertex[idx++] = randG;
+		genVertex[idx++] = randB;
+		genVertex[idx++] = randA;
+
+		genVertex[idx++] = randX + rectSize;
+		genVertex[idx++] = randY - rectSize;
+		genVertex[idx++] = 0.f;
+		genVertex[idx++] = randvelx;
+		genVertex[idx++] = randvely;
+		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
+		genVertex[idx++] = randHeight;
+		genVertex[idx++] = randWidth;
+		genVertex[idx++] = randValue;
+		genVertex[idx++] = randR;
+		genVertex[idx++] = randG;
+		genVertex[idx++] = randB;
+		genVertex[idx++] = randA;
+		genVertex[idx++] = randX + rectSize;
+		genVertex[idx++] = randY + rectSize;
+		genVertex[idx++] = 0.f;
+		genVertex[idx++] = randvelx;
+		genVertex[idx++] = randvely;
+		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
+		genVertex[idx++] = randHeight;
+		genVertex[idx++] = randWidth;
+		genVertex[idx++] = randValue;
+		genVertex[idx++] = randR;
+		genVertex[idx++] = randG;
+		genVertex[idx++] = randB;
+		genVertex[idx++] = randA;
+		genVertex[idx++] = randX - rectSize;
+		genVertex[idx++] = randY - rectSize;
+		genVertex[idx++] = 0.f;
+		genVertex[idx++] = randvelx;
+		genVertex[idx++] = randvely;
+		genVertex[idx++] = randvelz;
+		genVertex[idx++] = randemit;
+		genVertex[idx++] = randlife;
+		genVertex[idx++] = randHeight;
+		genVertex[idx++] = randWidth;
+		genVertex[idx++] = randValue;
+		genVertex[idx++] = randR;
+		genVertex[idx++] = randG;
+		genVertex[idx++] = randB;
+		genVertex[idx++] = randA;
+	}
+	glGenBuffers(1, pvbo);
+	glBindBuffer(GL_ARRAY_BUFFER, *pvbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertexArraySize, genVertex, GL_STATIC_DRAW);
 
 	delete[] genVertex;
@@ -442,8 +625,6 @@ void Renderer::Lecture4()
 	glUseProgram(m_ParticleShader);
 
 	GLuint uTime = glGetUniformLocation(m_ParticleShader, "u_Time");
-	GLuint udirX = glGetUniformLocation(m_ParticleShader, "u_dirX");
-	GLuint udirY = glGetUniformLocation(m_ParticleShader, "u_dirY");
 
 	m_uTime += 0.01f * m_uTimeDir;
 	/*if (m_uTime >= 1.f)
@@ -465,10 +646,96 @@ void Renderer::Lecture4()
 
 	glVertexAttribPointer(aVel, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (GLvoid*)(sizeof(float) * 3));
 
+	GLuint aEmit = glGetAttribLocation(m_ParticleShader, "a_EmitTime");
+
+	glDisableVertexAttribArray(aPot);
+	glDisableVertexAttribArray(aVel);
+}
+
+void Renderer::Lecture5()
+{
+	glUseProgram(m_ParticleShader);
+
+	GLuint uTime = glGetUniformLocation(m_ParticleShader, "u_Time");
+	GLuint uRepeat = glGetUniformLocation(m_ParticleShader, "u_Repeat");
+
+	m_uTime += 0.01f;
+	/*if (m_uTime >= 1.f)
+		m_uTimeDir *= -1.f;
+	else if(m_uTime < -1.f)
+		m_uTimeDir *= -1.f;*/
+
+	glUniform1f(uTime, m_uTime);
+	//glUniformb(uRepeat, m_uTime);
+
+	GLuint aPot = glGetAttribLocation(m_ParticleShader, "a_Position");					// !!!쓰는 방법 외우기
+	GLuint aVel = glGetAttribLocation(m_ParticleShader, "a_Vel");
+	GLuint aStartLife = glGetAttribLocation(m_ParticleShader, "a_StartLife");
+
+	glEnableVertexAttribArray(aPot);
+	glEnableVertexAttribArray(aVel);
+	glEnableVertexAttribArray(aStartLife);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOGen);
+
+	glVertexAttribPointer(aPot, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, 0);
+	glVertexAttribPointer(aVel, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (GLvoid*)(sizeof(float) * 3));
+	glVertexAttribPointer(aStartLife, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (GLvoid*)(sizeof(float) * 6));
+
 	glDrawArrays(GL_TRIANGLES, 0, m_nGen * 3 * 6);
 
 	glDisableVertexAttribArray(aPot);
 	glDisableVertexAttribArray(aVel);
+	glDisableVertexAttribArray(aStartLife);
+}
+
+void Renderer::Lecture6()
+{
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glUseProgram(m_PosShader);
+
+	GLuint uTime = glGetUniformLocation(m_PosShader, "u_Time");
+	GLuint uUTime = glGetUniformLocation(m_PosShader, "u_UTime");
+
+	m_uTime += 0.001f * m_uTimeDir;
+	//m_uUTime += 0.0001f;
+	/*if (m_uTime > 5.f)
+		m_uTimeDir *= -1.f;
+	else if (m_uTime < 0.f)
+		m_uTimeDir *= -1.f;*/
+
+	glUniform1f(uTime, m_uTime);
+	glUniform1f(uUTime, m_uUTime);
+
+	GLuint aPot = glGetAttribLocation(m_PosShader, "a_Position");					// !!!쓰는 방법 외우기
+	GLuint aTemp = glGetAttribLocation(m_PosShader, "a_Temp");
+	GLuint aVel = glGetAttribLocation(m_PosShader, "a_Vel");
+	GLuint aValue = glGetAttribLocation(m_PosShader, "a_Value");
+	GLuint aColor = glGetAttribLocation(m_PosShader, "a_Color");
+
+	glEnableVertexAttribArray(aPot);
+	glEnableVertexAttribArray(aTemp);
+	glEnableVertexAttribArray(aVel);
+	glEnableVertexAttribArray(aValue);
+	glEnableVertexAttribArray(aColor);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOpos);
+
+	glVertexAttribPointer(aPot, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 15, 0);	
+	glVertexAttribPointer(aVel, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 15, (GLvoid *)(sizeof(float) * 3));
+	glVertexAttribPointer(aTemp, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 15, (GLvoid *)(sizeof(float) * 6));
+	glVertexAttribPointer(aValue, 1, GL_FLOAT, GL_FALSE, sizeof(float) * 15, (GLvoid *)(sizeof(float) * 10));
+	glVertexAttribPointer(aColor, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 15, (GLvoid *)(sizeof(float) * 11));
+
+	glDrawArrays(GL_TRIANGLES, 0, m_nPos * 3 * 6);
+
+	glDisableVertexAttribArray(aPot);
+	glDisableVertexAttribArray(aVel);
+	glDisableVertexAttribArray(aTemp);
+	glDisableVertexAttribArray(aValue);
+	glDisableVertexAttribArray(aColor);
 }
 
 void Renderer::CreateGridMesh()
@@ -566,4 +833,27 @@ void Renderer::DrawGridMesh()
 	glDrawArrays(GL_TRIANGLES, 0, m_nGridMesh);
 
 	glDisableVertexAttribArray(0);
+}
+
+void Renderer::Lecture7()
+{
+	GLuint shader = m_SandBoxShader;
+
+	glUseProgram(shader);
+
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+	GLuint aUV = glGetAttribLocation(shader, "a_UV");
+
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aUV);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
+
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+	glVertexAttribPointer(aUV, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (GLvoid *)(sizeof(float) * 4));
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aUV);
 }
