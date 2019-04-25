@@ -16,6 +16,6 @@ void main()
 	newPosition.z = a_Position.z;
 	newPosition.w = 1.f;
 
-	gl_Position   = //newPosition;
-					vec4(a_Position.xyz, 1);
+	gl_Position   = newPosition;
+					//vec4(a_Position.xyz, 1);
 }

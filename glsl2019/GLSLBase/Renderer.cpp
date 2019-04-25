@@ -30,6 +30,14 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 	m_PosShader = CompileShaders("./Shaders/Lecture3_3.vs", "./Shaders/Lecture3_3.fs");
 
 	m_SandBoxShader = CompileShaders("./Shaders/SandBox.vs", "./Shaders/SandBox.fs");
+	m_FillAllShader = CompileShaders("./Shaders/FillAll.vs", "./Shaders/FillAll.fs");
+
+	m_TextureShader = CompileShaders("./Shaders/Texture.vs", "./Shaders/Texture.fs");
+
+	//Textures
+	m_ParticleTexture = CreatePngTexture("./Textures/Painter_Black.png");
+	m_ParticleTexture1 = CreatePngTexture("./Textures/Painter_Red.png");
+
 	//Create VBOs
 	CreateVertexBufferObjects();
 }
@@ -42,7 +50,7 @@ void Renderer::CreateVertexBufferObjects()
 	//	-0.5, -0.5, 0.f, -0.5, 0.5, 0.f, 0.5, 0.5, 0.f, //Triangle1
 	//	-0.5, -0.5, 0.f,  0.5, 0.5, 0.f, 0.5, -0.5, 0.f, //Triangle2
 	//};
-	float fsize = 0.5f;
+	float fsize = 1.f;
 	float rect[]
 		=
 	{
@@ -57,6 +65,23 @@ void Renderer::CreateVertexBufferObjects()
 	glGenBuffers(1, &m_VBORect);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
+
+	// Texture
+	fsize = 1.f;
+	float rect2[]
+		=
+	{
+		-fsize, -fsize, 0.f, 0.f, 0.f,				// x, y, z, value, u, v
+		-fsize,  fsize, 0.f, 0.f, 1.f,
+		 fsize,  fsize, 0.f, 1.f, 1.f,				//Triangle1
+		-fsize, -fsize, 0.f, 0.f, 0.f,
+		 fsize,  fsize, 0.f, 1.f, 1.f,
+		 fsize, -fsize, 0.f, 1.f, 0.f					//Triangle2
+	};
+	//glEnableVertexArrayAttrib()
+	glGenBuffers(1, &m_VBOTexture);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTexture);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rect2), rect2, GL_STATIC_DRAW);
 
 	float rectColor[]
 		=
@@ -487,8 +512,8 @@ void Renderer::Lecture6_Shader(int num, bool israndom, GLuint *pvbo, int *pnvbo,
 
 	for (int i = 1; i <= num; ++i)
 	{
-		float heightMin = -0.2f;
-		float heightMax = 0.2f;
+		float heightMin = -0.5f;
+		float heightMax = 0.5f;
 		float widthMin = 0.1f;
 		float widthMax = 0.5f;
 		float randX = 0.f;
@@ -699,7 +724,7 @@ void Renderer::Lecture6()
 	GLuint uTime = glGetUniformLocation(m_PosShader, "u_Time");
 	GLuint uUTime = glGetUniformLocation(m_PosShader, "u_UTime");
 
-	m_uTime += 0.001f * m_uTimeDir;
+	m_uTime += 0.01f * m_uTimeDir;
 	//m_uUTime += 0.0001f;
 	/*if (m_uTime > 5.f)
 		m_uTimeDir *= -1.f;
@@ -839,7 +864,18 @@ void Renderer::Lecture7()
 {
 	GLuint shader = m_SandBoxShader;
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glUseProgram(shader);
+
+	GLuint uPoints = glGetUniformLocation(shader, "u_Points");
+
+	GLuint uTime = glGetUniformLocation(shader, "u_Time");
+
+	m_uTime += 0.003f;
+
+	glUniform1f(uTime, m_uTime);
 
 	GLuint aPos = glGetAttribLocation(shader, "a_Position");
 	GLuint aUV = glGetAttribLocation(shader, "a_UV");
@@ -851,6 +887,65 @@ void Renderer::Lecture7()
 
 	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
 	glVertexAttribPointer(aUV, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (GLvoid *)(sizeof(float) * 4));
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aUV);
+}
+
+void Renderer::FillAll(float falpha)
+{
+	GLuint shader = m_FillAllShader;
+
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glUseProgram(shader);
+
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+
+	glEnableVertexAttribArray(aPos);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
+
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(aPos);
+}
+
+void Renderer::Texture()
+{
+	GLuint shader = m_TextureShader;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	int uTex = glGetUniformLocation(shader, "u_Texture");
+	glUniform1i(uTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_ParticleTexture);
+
+	glUseProgram(shader);
+
+	GLuint uTime = glGetUniformLocation(shader, "u_Time");
+
+	m_uTime += 0.01f;
+
+	glUniform1f(uTime, m_uTime);
+
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+	GLuint aUV = glGetAttribLocation(shader, "a_UV");
+
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aUV);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOTexture);
+
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+	glVertexAttribPointer(aUV, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (GLvoid *)(sizeof(float) * 3));
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 

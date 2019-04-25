@@ -53,6 +53,18 @@
     <None Include="Shaders\SandBox.vs">
       <Filter>Shader\SandBox</Filter>
     </None>
+    <None Include="Shaders\FillAll.fs">
+      <Filter>Shader\FillAll</Filter>
+    </None>
+    <None Include="Shaders\FillAll.vs">
+      <Filter>Shader\FillAll</Filter>
+    </None>
+    <None Include="Shaders\Texture.fs">
+      <Filter>Shader\Texture</Filter>
+    </None>
+    <None Include="Shaders\Texture.vs">
+      <Filter>Shader\Texture</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -69,6 +81,12 @@
     </Filter>
     <Filter Include="Shader\SandBox">
       <UniqueIdentifier>{3741b486-52ae-46f3-9b3e-6a04dc296295}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\FillAll">
+      <UniqueIdentifier>{444230a0-2b77-4554-9fef-b7c8415b1e71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Texture">
+      <UniqueIdentifier>{704d8878-9ad6-48ba-aee7-6913b4605f0d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

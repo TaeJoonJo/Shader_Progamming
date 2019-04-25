@@ -35,6 +35,10 @@ public:
 
 	void CreateGridMesh(void);
 	void DrawGridMesh(void);
+
+	void FillAll(float falpha);
+
+	void Texture();
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	bool ReadFile(char* filename, std::string *target);
@@ -47,16 +51,26 @@ private:
 	
 	unsigned int m_WindowSizeX = 0;
 	unsigned int m_WindowSizeY = 0;
+private:
+	GLuint m_ParticleTexture = 0;
+	GLuint m_ParticleTexture1 = 0;
+	GLuint m_ParticleTexture2 = 0;
 
+private:
 	float m_uTime = 0;
 	float m_uTimeDir = 1.f;
 	float m_uUTime = 0;
-
+private:
 	GLuint m_VBORect = 0;
 	GLuint m_VBORectColor = 0;
 	GLuint m_SolidRectShader = 0;
 	
 	GLuint m_SandBoxShader = 0;
+
+	GLuint m_FillAllShader = 0;
+
+	GLuint m_VBOTexture = 0;
+	GLuint m_TextureShader = 0;
 
 	GLuint m_VBOTri = 0;
 	GLuint m_SolidTriShader = 0;

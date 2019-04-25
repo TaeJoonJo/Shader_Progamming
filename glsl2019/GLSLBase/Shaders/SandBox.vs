@@ -12,6 +12,6 @@ void main()
 
 	//v_Pos = a_Position;
 	//v_Pos = vec4(a_UV.xy, 0, 1);
-	v_Pos = vec4(a_Position.xy + vec2(.5, .5), 0, 1);
+	v_Pos = vec4(a_Position.xy, 0, 1);
 	v_UV = a_UV;
 }

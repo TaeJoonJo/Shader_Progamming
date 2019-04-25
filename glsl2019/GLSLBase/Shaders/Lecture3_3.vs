@@ -22,7 +22,7 @@ const mat3 c_RP = mat3(  0, 1, 0,
 						 1, 0, 0,
 						 0, 0, 0  );
 
-const vec3 c_Gravity = vec3(0.f, -11.f, 0.f);
+const vec3 c_Gravity = vec3(0.f, 0.f, 0.f);
 
 void main()
 {
@@ -40,8 +40,8 @@ void main()
 	vec4 newColor = a_Color;
 
 	if(newTime >= 0) {
-		newPos.x += sin(a_Value * PI * 2);
-		newPos.y += cos(a_Value * PI * 2);
+		//newPos.x += sin(a_Value * PI * 2);
+		//newPos.y += cos(a_Value * PI * 2);
 
 		newTime = mod(newTime, lifeTime);
 
