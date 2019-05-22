@@ -65,6 +65,30 @@
     <None Include="Shaders\Texture.vs">
       <Filter>Shader\Texture</Filter>
     </None>
+    <None Include="Shaders\CheckerBoard.fs">
+      <Filter>Shader\CheckerBoard</Filter>
+    </None>
+    <None Include="Shaders\CheckerBoard.vs">
+      <Filter>Shader\CheckerBoard</Filter>
+    </None>
+    <None Include="Shaders\DrawNumber.fs">
+      <Filter>Shader\Number</Filter>
+    </None>
+    <None Include="Shaders\DrawNumber.vs">
+      <Filter>Shader\Number</Filter>
+    </None>
+    <None Include="Shaders\SpriteTexture.fs">
+      <Filter>Shader\Sprite</Filter>
+    </None>
+    <None Include="Shaders\SpriteTexture.vs">
+      <Filter>Shader\Sprite</Filter>
+    </None>
+    <None Include="Shaders\GridMesh.fs">
+      <Filter>Shader\GridMesh</Filter>
+    </None>
+    <None Include="Shaders\GridMesh.vs">
+      <Filter>Shader\GridMesh</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -87,6 +111,18 @@
     </Filter>
     <Filter Include="Shader\Texture">
       <UniqueIdentifier>{704d8878-9ad6-48ba-aee7-6913b4605f0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\CheckerBoard">
+      <UniqueIdentifier>{9fb3c215-05d9-430b-b698-90f662af9c12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Number">
+      <UniqueIdentifier>{a334fd1d-3dcc-4136-a886-78ab712177e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Sprite">
+      <UniqueIdentifier>{8af29400-0c33-4d2a-8e1b-3ec3fcda3705}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\GridMesh">
+      <UniqueIdentifier>{271d56ba-3b10-4113-86e2-fabcf4b10176}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

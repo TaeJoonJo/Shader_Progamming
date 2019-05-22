@@ -173,8 +173,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\CheckerBoard.fs" />
+    <None Include="Shaders\CheckerBoard.vs" />
+    <None Include="Shaders\DrawNumber.fs" />
+    <None Include="Shaders\DrawNumber.vs" />
     <None Include="Shaders\FillAll.fs" />
     <None Include="Shaders\FillAll.vs" />
+    <None Include="Shaders\GridMesh.fs" />
+    <None Include="Shaders\GridMesh.vs" />
     <None Include="Shaders\Lecture3_3.fs" />
     <None Include="Shaders\Lecture3_3.vs" />
     <None Include="Shaders\Lecture3_Particle.fs" />
@@ -183,6 +189,8 @@
     <None Include="Shaders\SandBox.vs" />
     <None Include="Shaders\SolidRect.fs" />
     <None Include="Shaders\SolidRect.vs" />
+    <None Include="Shaders\SpriteTexture.fs" />
+    <None Include="Shaders\SpriteTexture.vs" />
     <None Include="Shaders\Texture.fs" />
     <None Include="Shaders\Texture.vs" />
   </ItemGroup>

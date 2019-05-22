@@ -39,6 +39,15 @@ public:
 	void FillAll(float falpha);
 
 	void Texture();
+
+	void CreateCheckerBoardTexture();
+	void DrawCheckerBoard();
+
+	void DrawMultiTexture();
+
+	void DrawNumber(int number);
+
+	void DrawSpriteSequence(GLfloat number);
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	bool ReadFile(char* filename, std::string *target);
@@ -56,6 +65,27 @@ private:
 	GLuint m_ParticleTexture1 = 0;
 	GLuint m_ParticleTexture2 = 0;
 
+	GLuint m_RGBTexture = 0;
+
+	GLuint m_LegoTexture1 = 0;
+	GLuint m_LegoTexture2 = 0;
+	GLuint m_LegoTexture3 = 0;
+	GLuint m_LegoTexture4 = 0;
+	GLuint m_LegoTexture5 = 0;
+
+	GLuint m_SuperTexture1 = 0;
+	GLuint m_SuperTexture2 = 0;
+	GLuint m_SuperTexture3 = 0;
+	GLuint m_SuperTexture4 = 0;
+	GLuint m_SuperTexture5 = 0;
+
+	GLuint m_CheckerBoardTexture = 0;
+
+	GLuint m_NumbersTexture = 0;
+
+	GLuint m_SpriteTexture = 0;
+
+	GLuint m_FlagTexture = 0;
 private:
 	float m_uTime = 0;
 	float m_uTimeDir = 1.f;
@@ -68,6 +98,9 @@ private:
 	GLuint m_SandBoxShader = 0;
 
 	GLuint m_FillAllShader = 0;
+
+	GLuint m_VBOCheckerBoard = 0;
+	GLuint m_CheckerBoardShader = 0;
 
 	GLuint m_VBOTexture = 0;
 	GLuint m_TextureShader = 0;
@@ -85,6 +118,12 @@ private:
 
 	GLuint m_VBOGridMesh = 0;
 	int m_nGridMesh = 0;
+
+	GLuint m_NumberShader = 0;
+
+	GLuint m_SpriteShader = 0;
+
+	GLuint m_GridMeshShader = 0;
 };
 
 template <typename T>

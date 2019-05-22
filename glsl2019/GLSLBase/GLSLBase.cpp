@@ -19,6 +19,8 @@ Renderer *g_Renderer = NULL;
 
 int g_WindowSizeX = 600;
 int g_WindowSizeY = 600;
+int g_number;
+float g_fnumber = 0.f;
 
 void RenderScene(void)
 {
@@ -26,14 +28,21 @@ void RenderScene(void)
 	glClearColor(0.0f, 0.f, 0.f, 1.0f);
 	//g_Renderer->FillAll(0.2f);
 
+	//g_Renderer->DrawMultiTexture();
+	g_fnumber += .004f;
+	//g_Renderer->DrawNumber(static_cast<int>(g_fnumber));
+	//g_Renderer->DrawSpriteSequence((g_fnumber));
+	g_Renderer->DrawGridMesh();
+
 	//g_Renderer->Test();
 	//g_Renderer->Lecture2_2();
 	//g_Renderer->Lecture4();
 	//g_Renderer->Lecture5();
 	//g_Renderer->Lecture6();
 	//g_Renderer->Lecture7();
-	g_Renderer->Texture();
-
+	
+	//g_Renderer->Texture();
+	
 	glutSwapBuffers();
 }
 

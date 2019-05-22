@@ -34,9 +34,36 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
 
 	m_TextureShader = CompileShaders("./Shaders/Texture.vs", "./Shaders/Texture.fs");
 
+	m_CheckerBoardShader = CompileShaders("./Shaders/CheckerBoard.vs", "./Shaders/CheckerBoard.fs");
+	
+	m_NumberShader = CompileShaders("./Shaders/DrawNumber.vs", "./Shaders/DrawNumber.fs");
+
+	m_SpriteShader = CompileShaders("./Shaders/SpriteTexture.vs", "./Shaders/SpriteTexture.fs");
+
+	m_GridMeshShader = CompileShaders("./Shaders/GridMesh.vs", "./Shaders/GridMesh.fs");
+
 	//Textures
-	m_ParticleTexture = CreatePngTexture("./Textures/Painter_Black.png");
-	m_ParticleTexture1 = CreatePngTexture("./Textures/Painter_Red.png");
+	//m_ParticleTexture = CreatePngTexture("./Textures/Painter_Black.png");
+	//m_ParticleTexture1 = CreatePngTexture("./Textures/Painter_Red.png");
+	//m_RGBTexture = CreatePngTexture("./Textures/rgb.png");
+	//
+	//m_LegoTexture1 = CreatePngTexture("./Textures/Lego1.png");
+	//m_LegoTexture2 = CreatePngTexture("./Textures/Lego6.png");
+	//m_LegoTexture3 = CreatePngTexture("./Textures/Lego3.png");
+	//m_LegoTexture4 = CreatePngTexture("./Textures/Lego4.png");
+	//m_LegoTexture5 = CreatePngTexture("./Textures/Lego5.png");
+	//
+	//m_SuperTexture1 = CreatePngTexture("./Textures/super1.png");
+	//m_SuperTexture2 = CreatePngTexture("./Textures/super2.png");
+	//m_SuperTexture3 = CreatePngTexture("./Textures/super3.png");
+	//m_SuperTexture4 = CreatePngTexture("./Textures/super4.png");
+	//m_SuperTexture5 = CreatePngTexture("./Textures/super5.png");
+
+	m_NumbersTexture = CreatePngTexture("./Textures/numbers.png");
+
+	//m_SpriteTexture = CreatePngTexture("./Textures/sprite2.png");
+
+	m_FlagTexture = CreatePngTexture("./Textures/flag.png");
 
 	//Create VBOs
 	CreateVertexBufferObjects();
@@ -113,6 +140,8 @@ void Renderer::CreateVertexBufferObjects()
 	Lecture6_Shader(100, false, &m_VBOpos, &m_nPos, 0, 0, 0);
 
 	CreateGridMesh();
+
+	CreateCheckerBoardTexture();
 }
 
 void Renderer::AddShader(GLuint ShaderProgram, const char* pShaderText, GLenum ShaderType)
@@ -335,7 +364,7 @@ GLuint Renderer::CreateBmpTexture(char * filePath)
 	glBindTexture(GL_TEXTURE_2D, temp);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bmp);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, bmp);
 
 	return temp;
 }
@@ -501,7 +530,7 @@ void Renderer::Lecture6_Shader(int num, bool israndom, GLuint *pvbo, int *pnvbo,
 
 	*pnvbo = num;
 
-	float rectSize = 0.05f;
+	float rectSize = 0.1f;
 	int verticePerQuad = 6;
 	int floatsPerVertex = 3 + 3 + 2 + 2 + 1 + 4;
 
@@ -724,7 +753,7 @@ void Renderer::Lecture6()
 	GLuint uTime = glGetUniformLocation(m_PosShader, "u_Time");
 	GLuint uUTime = glGetUniformLocation(m_PosShader, "u_UTime");
 
-	m_uTime += 0.01f * m_uTimeDir;
+	m_uTime += 0.001f * m_uTimeDir;
 	//m_uUTime += 0.0001f;
 	/*if (m_uTime > 5.f)
 		m_uTimeDir *= -1.f;
@@ -848,7 +877,18 @@ void Renderer::CreateGridMesh()
 
 void Renderer::DrawGridMesh()
 {
-	glUseProgram(m_SolidRectShader);
+	glUseProgram(m_GridMeshShader);
+
+	GLuint uTime = glGetUniformLocation(m_GridMeshShader, "u_Time");
+
+	m_uTime += 0.056f * m_uTimeDir;
+
+	glUniform1f(uTime, m_uTime);
+
+	int uTex = glGetUniformLocation(m_GridMeshShader, "u_Texture");
+	glUniform1i(uTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_FlagTexture);
 
 	//int attribPosition = glGetAttribLocation(m_SolidRectShader, "a_Position");
 	glEnableVertexAttribArray(0);
@@ -932,7 +972,7 @@ void Renderer::Texture()
 
 	GLuint uTime = glGetUniformLocation(shader, "u_Time");
 
-	m_uTime += 0.01f;
+	m_uTime += 0.003f;
 
 	glUniform1f(uTime, m_uTime);
 
@@ -949,6 +989,223 @@ void Renderer::Texture()
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aUV);
+}
+
+void Renderer::CreateCheckerBoardTexture()
+{
+	float fsize = 0.5f;
+	float fuvsize = fsize * 0.5f;
+	float rect[]
+		=
+	{
+		-fsize, -fsize, 0.f, 0.f, 0.f,				// x, y, z, value, u, v
+		-fsize,  fsize, 0.f, 0.f, 1.f,
+		 fsize,  fsize, 0.f, 1.f, 1.f,				//Triangle1
+		-fsize, -fsize, 0.f, 0.f, 0.f,
+		 fsize,  fsize, 0.f, 1.f, 1.f,
+		 fsize, -fsize, 0.f, 1.f, 0.f					//Triangle2
+	};
+
+	glGenBuffers(1, &m_VBOCheckerBoard);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOCheckerBoard);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
+
+	static const GLulong checkerboard[] =
+	{
+	0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000,
+	0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+	0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000,
+	0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+	0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000,
+	0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF,
+	0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000,
+	0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF
+	};
+
+	glGenTextures(1, &m_CheckerBoardTexture);
+	glBindTexture(GL_TEXTURE_2D, m_CheckerBoardTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkerboard);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+void Renderer::DrawCheckerBoard()
+{
+	GLuint shader = m_CheckerBoardShader;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	int uTex = glGetUniformLocation(shader, "u_Texture");
+	glUniform1i(uTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, m_CheckerBoardTexture);
+	glBindTexture(GL_TEXTURE_2D, m_RGBTexture);
+
+	glUseProgram(shader);
+
+	GLuint uTime = glGetUniformLocation(shader, "u_Time");
+
+	m_uTime += 0.0001f;
+
+	glUniform1f(uTime, m_uTime);
+
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+	GLuint aUV = glGetAttribLocation(shader, "a_UV");
+
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aUV);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOCheckerBoard);
+
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+	glVertexAttribPointer(aUV, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (GLvoid*)(sizeof(float) * 3));
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aUV);
+}
+
+void Renderer::DrawMultiTexture()
+{
+	GLuint shader = m_CheckerBoardShader;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	int uTex = glGetUniformLocation(shader, "u_Texture");
+	glUniform1i(uTex, (GLuint)m_uTime);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_SuperTexture1);
+
+	int uTex1 = glGetUniformLocation(shader, "u_Texture1");
+	glUniform1i(uTex1, (GLuint)m_uTime + 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_SuperTexture2);
+
+	int uTex2 = glGetUniformLocation(shader, "u_Texture2");
+	glUniform1i(uTex2, (GLuint)m_uTime + 2);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, m_SuperTexture3);
+
+	int uTex3 = glGetUniformLocation(shader, "u_Texture3");
+	glUniform1i(uTex3, (GLuint)m_uTime + 3);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, m_SuperTexture4);
+
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, m_SuperTexture5);
+
+	glUseProgram(shader);
+
+	GLuint uTime = glGetUniformLocation(shader, "u_Time");
+
+	m_uTime += 0.005f;
+	if (m_uTime > 5.f)
+		m_uTime = 0.f;
+
+	glUniform1f(uTime, m_uTime);
+
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+	GLuint aUV = glGetAttribLocation(shader, "a_UV");
+
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aUV);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOCheckerBoard);
+
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+	glVertexAttribPointer(aUV, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (GLvoid*)(sizeof(float) * 3));
+
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aUV);
+}
+
+void Renderer::DrawNumber(int number)
+{
+	GLuint shader = m_NumberShader;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//texture settings
+	int uTex = glGetUniformLocation(shader, "u_Texture");
+	glUniform1i(uTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_NumbersTexture);
+
+	glUseProgram(shader);
+
+	GLuint uNumber = glGetUniformLocation(shader, "u_Number");
+
+	glUniform1i(uNumber, number);
+
+	// vertex settings
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+	GLuint aUV = glGetAttribLocation(shader, "a_UV");
+
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aUV);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOCheckerBoard);
+
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+	glVertexAttribPointer(aUV, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (GLvoid*)(sizeof(float) * 3));
+
+	// Draw Here
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	// Restore to Default
+	glDisableVertexAttribArray(aPos);
+	glDisableVertexAttribArray(aUV);
+}
+
+void Renderer::DrawSpriteSequence(GLfloat number)
+{
+	GLuint shader = m_SpriteShader;
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//texture settings
+	int uTex = glGetUniformLocation(shader, "u_Texture");
+	glUniform1i(uTex, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_SpriteTexture);
+
+	glUseProgram(shader);
+
+	GLuint uNumber = glGetUniformLocation(shader, "u_Number");
+	glUniform1f(uNumber, number);
+	GLuint uX = glGetUniformLocation(shader, "u_ResolX");
+	glUniform1f(uX, 8.f);
+	GLuint uY = glGetUniformLocation(shader, "u_ResolY");
+	glUniform1f(uY, 8.f);
+
+	// vertex settings
+	GLuint aPos = glGetAttribLocation(shader, "a_Position");
+	GLuint aUV = glGetAttribLocation(shader, "a_UV");
+
+	glEnableVertexAttribArray(aPos);
+	glEnableVertexAttribArray(aUV);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBOCheckerBoard);
+
+	glVertexAttribPointer(aPos, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+	glVertexAttribPointer(aUV, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (GLvoid*)(sizeof(float) * 3));
+
+	// Draw Here
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	// Restore to Default
 	glDisableVertexAttribArray(aPos);
 	glDisableVertexAttribArray(aUV);
 }
