@@ -19,6 +19,6 @@ void main()
 		newColor.a = 0.f;
 	
 	FragColor = newColor;
-
+	//FragColor = vec4(2.f,2.f,2.f,1.f);
 	//FragColor = texture(u_Texture, v_OrignXY);
 }

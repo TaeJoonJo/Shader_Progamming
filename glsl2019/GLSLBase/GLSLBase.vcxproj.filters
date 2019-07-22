@@ -89,6 +89,24 @@
     <None Include="Shaders\GridMesh.vs">
       <Filter>Shader\GridMesh</Filter>
     </None>
+    <None Include="Shaders\Cube.fs">
+      <Filter>Shader\Cube</Filter>
+    </None>
+    <None Include="Shaders\Cube.vs">
+      <Filter>Shader\Cube</Filter>
+    </None>
+    <None Include="Shaders\DrawTexture.fs">
+      <Filter>Shader\DrawTexture</Filter>
+    </None>
+    <None Include="Shaders\DrawTexture.vs">
+      <Filter>Shader\DrawTexture</Filter>
+    </None>
+    <None Include="Shaders\DrawHDRTexture.fs">
+      <Filter>Shader\DrawHDRTexture</Filter>
+    </None>
+    <None Include="Shaders\DrawHDRTexture.vs">
+      <Filter>Shader\DrawHDRTexture</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -123,6 +141,15 @@
     </Filter>
     <Filter Include="Shader\GridMesh">
       <UniqueIdentifier>{271d56ba-3b10-4113-86e2-fabcf4b10176}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\Cube">
+      <UniqueIdentifier>{6eaa504f-fa58-4991-b3a8-3671d679cd96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\DrawTexture">
+      <UniqueIdentifier>{08b927f5-72a7-428f-b90c-207de4c28ef3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\DrawHDRTexture">
+      <UniqueIdentifier>{ffd39a74-8fec-47e4-afb5-247067295562}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -8,9 +8,9 @@ in vec2 v_UV;
 uniform vec2 u_Points[5];
 uniform float u_Time;
 
-const vec2 c_Points[2] = {vec2(-0.4f, 0.2f), vec2(0.4, 0.3)};
+const vec2 c_Points[5] = {vec2(-0.4f, 0.5f), vec2(0.4, 0.3), vec2(0.f, 0.f), vec2(-0.5f, -0.5f), vec2(0.5f, -0.5f)};
 
-void main()
+void Radar()
 {
 	vec2 newUV = v_UV - vec2(0.5f, 0.5f);
 
@@ -26,7 +26,7 @@ void main()
 			pointGrey = temp;
 		}
 		else{
-			for(int i = 0; i < 2; ++i) {
+			for(int i = 0; i < 5; ++i) {
 				vec2 newPoint = c_Points[i];
 				vec2 newVec = newPoint - newUV;
 
@@ -34,11 +34,31 @@ void main()
 
 				if(dist < 0.1)
 				{
-					pointGrey += 0.5 * pow((1 - (dist / 0.1)), 2);
+					pointGrey += 0.8 * pow((1 - (dist / 0.1)), 2);
 				}
 			}
 		}
 	}
 	
 	FragColor = vec4(pointGrey);
+}
+
+void Waves()
+{
+	vec4 newColor = vec4(0);
+	vec2 newUV = v_UV - vec2(0.5f, 0.5f); // - 0.5~0.5 x, y
+
+	for(int i = 0; i < 5; ++i) {
+		vec2 newPoint = c_Points[i];
+		vec2 newVec = newPoint - newUV;
+		float dist = length(newVec) * 8 * 3.141592 + u_Time;
+		newColor += vec4(sin(dist));
+	}
+	FragColor = newColor;
+}
+
+void main()
+{
+	//Radar();
+	Waves();
 }

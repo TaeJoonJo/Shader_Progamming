@@ -17,8 +17,8 @@ but WITHOUT ANY WARRANTY.
 
 Renderer *g_Renderer = NULL;
 
-int g_WindowSizeX = 600;
-int g_WindowSizeY = 600;
+int g_WindowSizeX = 1024;
+int g_WindowSizeY = 1024;
 int g_number;
 float g_fnumber = 0.f;
 
@@ -29,10 +29,15 @@ void RenderScene(void)
 	//g_Renderer->FillAll(0.2f);
 
 	//g_Renderer->DrawMultiTexture();
-	g_fnumber += .004f;
+	g_fnumber += .04f;
 	//g_Renderer->DrawNumber(static_cast<int>(g_fnumber));
 	//g_Renderer->DrawSpriteSequence((g_fnumber));
-	g_Renderer->DrawGridMesh();
+	//g_Renderer->DrawGridMesh();
+	//g_Renderer->DrawCube();
+	//g_Renderer->DrawTexture(.4f, .4f, -.8f, -.8f);
+	//g_Renderer->TestFBO();
+
+	g_Renderer->DrawCheckerBoard();
 
 	//g_Renderer->Test();
 	//g_Renderer->Lecture2_2();
@@ -71,7 +76,7 @@ int main(int argc, char **argv)
 	// Initialize GL things
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowPosition(600, 200);
+	glutInitWindowPosition(600, 0);
 	glutInitWindowSize(g_WindowSizeX, g_WindowSizeY);
 	glutCreateWindow("GLSL KPU");
 

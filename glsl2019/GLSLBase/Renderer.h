@@ -48,6 +48,17 @@ public:
 	void DrawNumber(int number);
 
 	void DrawSpriteSequence(GLfloat number);
+
+	void CreateSimpleCube();
+	void DrawCube();
+
+	void InitializeMatrix();
+
+	void DrawTexture(float x, float y, float sx, float sy, GLuint textureID);
+	void DrawHDRTexture(float x, float y, float sx, float sy, GLuint textureID);
+	GLuint CreateFBO(int sx, int sy, GLuint* tex, bool isHDR = false);
+	void TestFBO();
+
 private:
 	void Initialize(int windowSizeX, int windowSizeY);
 	bool ReadFile(char* filename, std::string *target);
@@ -86,10 +97,23 @@ private:
 	GLuint m_SpriteTexture = 0;
 
 	GLuint m_FlagTexture = 0;
+
+	GLuint m_HeightmapTextrue = 0;
+	GLuint m_GrassTextrue = 0;
 private:
 	float m_uTime = 0;
 	float m_uTimeDir = 1.f;
 	float m_uUTime = 0;
+
+	glm::vec3 m_v3CameraPos;
+	glm::vec3 m_v3CameraLookAt;
+	glm::vec3 m_v3CameraUp;
+
+	glm::mat4 m_m4OrthoProj;
+	glm::mat4 m_m4PersProj;
+
+	glm::mat4 m_m4View;
+	glm::mat4 m_m4ViewProj;
 private:
 	GLuint m_VBORect = 0;
 	GLuint m_VBORectColor = 0;
@@ -124,6 +148,24 @@ private:
 	GLuint m_SpriteShader = 0;
 
 	GLuint m_GridMeshShader = 0;
+
+	GLuint m_VBOCube = 0;
+	int m_nCube = 0;
+	GLuint m_CubeShader = 0;
+
+	GLuint m_DrawTextureShader = 0;
+	GLuint m_FBOTexture0 = 0;
+	GLuint m_FBOTexture1 = 0;
+	GLuint m_FBOTexture2 = 0;
+	GLuint m_FBOTexture3 = 0;
+
+	GLuint m_DepthRenderBuffer = 0;
+	GLuint m_FBO0;
+	GLuint m_FBO1;
+	GLuint m_FBO2;
+	GLuint m_FBO3;
+
+	GLuint m_DrawHDRTextureShader = 0;
 };
 
 template <typename T>
@@ -131,7 +173,7 @@ static T GetRandom(T min, T max)
 {
 	std::random_device rd;
 	std::mt19937_64 rnd(rd());
-	std::uniform_real_distribution<float> range(min, max);
+	std::uniform_real_distribution<T> range(min, max);
 	
 	return range(rnd);
 }

@@ -40,8 +40,8 @@ void main()
 	vec4 newColor = a_Color;
 
 	if(newTime >= 0) {
-		//newPos.x += sin(a_Value * PI * 2);
-		//newPos.y += cos(a_Value * PI * 2);
+		newPos.x += cos(a_Value * PI * 2);
+		newPos.y += sin(a_Value * PI * 2);
 
 		newTime = mod(newTime, lifeTime);
 

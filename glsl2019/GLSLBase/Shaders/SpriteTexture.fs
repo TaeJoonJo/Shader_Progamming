@@ -18,8 +18,8 @@ void main()
 	int x_index = int(floor(fract((u_Number) / (u_ResolX)) * u_ResolX));
 	int y_index = int(floor(float(u_Number) / (u_ResolY)));
 
-	newUV.x = newUV.x / (u_ResolX) + x_index / (u_ResolX);
-	newUV.y = newUV.y / (u_ResolY) + y_index / (u_ResolY);
+	newUV.x = (newUV.x + x_index) / (u_ResolX);
+	newUV.y = (newUV.y + y_index) / (u_ResolY);
 	//newUV.x = u_ResolX - newUV.x;
 
 	vec4 newColor;

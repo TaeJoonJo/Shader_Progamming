@@ -23,14 +23,14 @@
     <ProjectGuid>{25179D6C-FA85-4619-8EDB-AC241382F6CA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GLSLBase</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
     <ProjectName>GLSLBase</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -74,6 +74,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -175,8 +176,14 @@
   <ItemGroup>
     <None Include="Shaders\CheckerBoard.fs" />
     <None Include="Shaders\CheckerBoard.vs" />
+    <None Include="Shaders\Cube.fs" />
+    <None Include="Shaders\Cube.vs" />
+    <None Include="Shaders\DrawHDRTexture.fs" />
+    <None Include="Shaders\DrawHDRTexture.vs" />
     <None Include="Shaders\DrawNumber.fs" />
     <None Include="Shaders\DrawNumber.vs" />
+    <None Include="Shaders\DrawTexture.fs" />
+    <None Include="Shaders\DrawTexture.vs" />
     <None Include="Shaders\FillAll.fs" />
     <None Include="Shaders\FillAll.vs" />
     <None Include="Shaders\GridMesh.fs" />
